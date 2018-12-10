@@ -23,8 +23,6 @@ console.log(surveyData);
 
 
 
-
-
 //  a function that automatically resizes the chart
 function makeResponsive() {
 
@@ -45,8 +43,8 @@ function makeResponsive() {
     var margin = {
       top: 50,
       bottom: 90,
-      right: 50,
-      left: 60
+      right: 40,
+      left: 70
     };
   
     var height = svgHeight - margin.top - margin.bottom;
@@ -95,12 +93,17 @@ function yRenderAxes(newYScale, yAxis) {
   }
 // function used to update circles on a change in x or y axis
 function renderCircles (circlesGroup, xScale, yScale, chosenXAxis, chosenYAxis ){
-    circlesGroup.selectAll("g")
+    circlesGroup.selectAll("circle")
         .transition()
         .duration(1000)
-        .attr("transform",
-        d=> `translate( ${xScale(d[chosenXAxis])}, 
-                   ${yScale(d[chosenYAxis])})`);
+        .attr("cx", d=> xScale(d[chosenXAxis]))
+        .attr("cy", d =>yScale(d[chosenYAxis]));
+
+      // circlesGroup.selectAll("text")
+        newText.transition()
+        .duration(1000)
+        .attr("x", d=> xScale(d[chosenXAxis])-10)
+        .attr("y", d =>yScale(d[chosenYAxis])+5);    
     return circlesGroup;
 }
   
@@ -146,22 +149,25 @@ function renderCircles (circlesGroup, xScale, yScale, chosenXAxis, chosenYAxis )
   //to contain circles and text
   var circlesGroup = chartGroup.selectAll("circle")
         .data(surveyData)
-    var elemEnter = circlesGroup.enter()
-        .append("g")
-        .attr("transform",
-            d=> `translate( ${xLinearScale(d[chosenXAxis])}, 
-                       ${yLinearScale(d[chosenYAxis])})`)
+        .enter()
+    // var elemEnter = circlesGroup.enter()
+    //     .append("g")
+        // .attr("transform",
+        //     d=> `translate( ${xLinearScale(d[chosenXAxis])}, 
+        //                ${yLinearScale(d[chosenYAxis])})`)
 
         /* circle for each block */
-        var newcircle= elemEnter.append("circle")
+        var newCircle=circlesGroup.append("circle")
+            .attr("cx", d=> xLinearScale(d[chosenXAxis]))
+            .attr("cy", d =>yLinearScale(d[chosenYAxis]))
             .attr("r", 20)
-            .classed("stateCircle" ,true)
+            .classed("stateCircleObesity" ,true)
             .attr("opacity", ".5");
 
         /* Create the text for each block */
-        elemEnter.append("text")
-            .attr("text-anchor", "middle")
-            .attr("dy", 5)
+       var newText=circlesGroup.append("text")
+            .attr("x", d=> xLinearScale(d[chosenXAxis])-10)
+            .attr("y",d =>yLinearScale(d[chosenYAxis])+5)
             .text(d => d.abbr);
 
   // Create group for  2 x- axis labels **************
@@ -188,14 +194,14 @@ var ylabelsGroup = chartGroup.append("g")
 
 var povertyLabel = ylabelsGroup.append("text")
 .attr("x", 0)
-.attr("y", -30)
+.attr("y", -40)
 .attr("value", "poverty") // value to grab for event listener
 .classed("active", true)
 .text("Percent of Households Below the poverty Line");
 
 var incomeLabel = ylabelsGroup.append("text")
 .attr("x", 0)
-.attr("y", -50)
+.attr("y", -60)
 .attr("value", "income") // value to grab for event listener
 .classed("inactive", true)
 .text("Average Income");
@@ -212,9 +218,7 @@ xlabelsGroup.selectAll("text")
     // replaces chosenXAxis with value
     chosenXAxis = value;
 
-    console.log(chosenXAxis)
-
-    // updates x scale for new data
+     // updates x scale for new data
     xLinearScale = xScale(surveyData, chosenXAxis);
 
     // updates x axis with transition
@@ -227,25 +231,72 @@ xlabelsGroup.selectAll("text")
     // circlesGroup = updateToolTip(chosenXAxis, circlesGroup);
 
     // changes classes to change bold text
-    // if (chosenXAxis === "num_albums") {
-    //   albumsLabel
-    //     .classed("active", true)
-    //     .classed("inactive", false);
-    //   hairLengthLabel
-    //     .classed("active", false)
-    //     .classed("inactive", true);
-    // }
-    // else {
-    //   albumsLabel
-    //     .classed("active", false)
-    //     .classed("inactive", true);
-    //   hairLengthLabel
-    //     .classed("active", true)
-    //     .classed("inactive", false);
-    // }
+    if (chosenXAxis === "obesity") {
+      newCircle
+        .classed("stateCircleObesity", true)
+        .classed("stateCircleSmoke", false);
+      obesityLabel
+        .classed("active", true)
+        .classed("inactive", false);
+      smokesLabel
+        .classed("active", false)
+        .classed("inactive", true);
+    }
+    else {
+      newCircle
+      .classed("stateCircleObesity", false)
+      .classed("stateCircleSmoke", true);
+      obesityLabel
+        .classed("active", false)
+        .classed("inactive", true);
+      smokesLabel
+        .classed("active", true)
+        .classed("inactive", false);
+    }
   }
 });
 
+// y axis labels event listener
+ylabelsGroup.selectAll("text")
+.on("click", function() {
+  // get value of selection
+  var value = d3.select(this).attr("value");
+  if (value !== chosenYAxis) {
+
+    // replaces chosenXAxis with value
+    chosenYAxis = value;
+
+    // updates x scale for new data
+    yLinearScale = yScale(surveyData, chosenYAxis);
+
+    // updates x axis with transition
+    yAxis = yRenderAxes(yLinearScale, yAxis);
+
+    // updates circles with new x values
+    circlesGroup = renderCircles(circlesGroup, xLinearScale, yLinearScale, chosenXAxis, chosenYAxis);
+
+    // updates tooltips with new info
+    // circlesGroup = updateToolTip(chosenXAxis, circlesGroup);
+
+    // changes classes to change bold text
+    if (chosenYAxis === "poverty") {
+      povertyLabel
+        .classed("active", true)
+        .classed("inactive", false);
+      incomeLabel
+        .classed("active", false)
+        .classed("inactive", true);
+    }
+    else {
+      povertyLabel
+        .classed("active", false)
+        .classed("inactive", true);
+      incomeLabel
+        .classed("active", true)
+        .classed("inactive", false);
+    }
+  }
+});
 
 
 
