@@ -24,11 +24,17 @@
 }
 
 /* font size dependent on radius, see app.js */
+.stateTextSmoke {
+  font-family: sans-serif;
+  fill: #fff;
+  text-anchor: middle;
+}
 .stateText {
   font-family: sans-serif;
   fill: #fff;
   text-anchor: middle;
 }
+
 
 .stateCircleSmoke {
   fill:bisque3;
@@ -44,7 +50,19 @@
   display: block;
   margin: 0;
 }
-
+.tooltip {
+  position: absolute;
+  width: 80px;
+  height: 50px;
+  padding: 10px;
+  font: 12px sans-serif;
+  text-align: center;
+  color: black;
+  background: blue;
+  border: 0;
+  border-radius: 10px;
+  display: none;
+}
 .d3-tip {
   padding: 6px;
   font-size: 12px;

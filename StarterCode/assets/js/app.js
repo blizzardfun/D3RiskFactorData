@@ -102,7 +102,7 @@ function renderCircles (circlesGroup, xScale, yScale, chosenXAxis, chosenYAxis )
       // circlesGroup.selectAll("text")
         newText.transition()
         .duration(1000)
-        .attr("x", d=> xScale(d[chosenXAxis])-10)
+        .attr("x", d=> xScale(d[chosenXAxis])-5)
         .attr("y", d =>yScale(d[chosenYAxis])+5);    
     return circlesGroup;
 }
@@ -166,8 +166,9 @@ function renderCircles (circlesGroup, xScale, yScale, chosenXAxis, chosenYAxis )
 
         /* Create the text for each block */
        var newText=circlesGroup.append("text")
-            .attr("x", d=> xLinearScale(d[chosenXAxis])-10)
+            .attr("x", d=> xLinearScale(d[chosenXAxis])-5)
             .attr("y",d =>yLinearScale(d[chosenYAxis])+5)
+            .classed("stateTextObesity" ,true)
             .text(d => d.abbr);
 
   // Create group for  2 x- axis labels **************
@@ -179,14 +180,14 @@ function renderCircles (circlesGroup, xScale, yScale, chosenXAxis, chosenYAxis )
     .attr("y", 20)
     .attr("value", "obesity") // value to grab for event listener
     .classed("active", true)
-    .text("Percent of Adults aged 18 and older who have Obesity");
+    .text("Obese (%)");
 
   var smokesLabel = xlabelsGroup.append("text")
     .attr("x", 0)
     .attr("y", 40)
     .attr("value", "smokes") // value to grab for event listener
     .classed("inactive", true)
-    .text("Percentage of Adults aged 18 and older who Smoke");
+    .text("Smokes (%)");
 
 // Create group for  2 y- axis labels **************
 var ylabelsGroup = chartGroup.append("g")
@@ -197,14 +198,19 @@ var povertyLabel = ylabelsGroup.append("text")
 .attr("y", -40)
 .attr("value", "poverty") // value to grab for event listener
 .classed("active", true)
-.text("Percent of Households Below the poverty Line");
+.text("In Poverty (%)");
 
 var incomeLabel = ylabelsGroup.append("text")
 .attr("x", 0)
 .attr("y", -60)
 .attr("value", "income") // value to grab for event listener
 .classed("inactive", true)
-.text("Average Income");
+.text("Household Income (Median)");
+
+  //  Append tooltip div
+  var toolTip = d3.select("body")
+    .append("div")
+    .attr("class", "tooltip");
 
 /****************************************************** */
 /* event listeners */
@@ -235,6 +241,9 @@ xlabelsGroup.selectAll("text")
       newCircle
         .classed("stateCircleObesity", true)
         .classed("stateCircleSmoke", false);
+      newText            
+        .classed("stateTextObesity" ,true)
+        .classed("stateTextSmoke" ,false);
       obesityLabel
         .classed("active", true)
         .classed("inactive", false);
@@ -246,6 +255,9 @@ xlabelsGroup.selectAll("text")
       newCircle
       .classed("stateCircleObesity", false)
       .classed("stateCircleSmoke", true);
+      newText            
+        .classed("stateTextObesity" ,false)
+        .classed("stateTextSmoke" ,true);
       obesityLabel
         .classed("active", false)
         .classed("inactive", true);
@@ -299,10 +311,26 @@ ylabelsGroup.selectAll("text")
 });
 
 
+  // "mouseover" event listener to display tooltip
+  circlesGroup.selectAll("circle")
+    .on("mouseover", function(d) {
+
+    console.log('x',chosenXAxis);
+    console.log('y',chosenYAxis );
 
 
+    toolTip.style("display", "block");
+    toolTip.html(`<strong>${d.state} </strong><br> ${chosenXAxis}:${d[chosenXAxis]}<br>${chosenYAxis} : ${d[chosenYAxis]}`)
+      .style("left", d3.event.pageX + "px")
+        .style("top", d3.event.pageY + "px");
+          });
+    // "mouseout" event listener to hide tooltip
+    circlesGroup.selectAll("circle")
+    .on("mouseout", function() {
+      toolTip.style("display", "none");
+    });
 
-
+  
   };  //function makeResponsive
 
 makeResponsive();
