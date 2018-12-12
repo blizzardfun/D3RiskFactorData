@@ -28,8 +28,7 @@ function makeResponsive() {
 
     // if the SVG area isn't empty when the browser loads,
     // remove it and replace it with a resized version of the chart
-    var svgArea = d3.select("body").select("svg");
-  
+    var svgArea = d3.select("#scatter").select("svg");
     // clear svg is not empty
     if (!svgArea.empty()) {
       svgArea.remove();
@@ -49,7 +48,9 @@ function makeResponsive() {
   
     var height = svgHeight - margin.top - margin.bottom;
     var width = svgWidth - margin.left - margin.right;
-  
+
+
+
 // ***********************************************
 // graphing function definitions
 //**************************************************
@@ -171,7 +172,7 @@ function renderCircles (circlesGroup, xScale, yScale, chosenXAxis, chosenYAxis )
             .classed("stateTextObesity" ,true)
             .text(d => d.abbr);
 
-  // Create group for  2 x- axis labels **************
+  // append group for  2 x- axis labels **************
   var xlabelsGroup = chartGroup.append("g")
     .attr("transform", `translate(${width / 2}, ${height + 20})`);
 
@@ -207,10 +208,17 @@ var incomeLabel = ylabelsGroup.append("text")
 .classed("inactive", true)
 .text("Household Income (Median)");
 
-  //  Append tooltip div
-  var toolTip = d3.select("body")
-    .append("div")
-    .attr("class", "tooltip");
+     //  Initialize Tooltip
+     var toolTip = d3.tip()
+     .attr("class", "tooltip")
+     .offset([80, -60])   //offset from page event
+     .html(function(d) {
+       return (`<strong>${d.state} </strong><br> ${chosenXAxis}:${d[chosenXAxis]}% <br>${chosenYAxis} : ${d[chosenYAxis]}%`);
+     });
+  
+  //
+     // Step 2: Create the tooltip in chartGroup.
+     chartGroup.call(toolTip);
 
 /****************************************************** */
 /* event listeners */
@@ -310,26 +318,32 @@ ylabelsGroup.selectAll("text")
   }
 });
 
+  // // "mouseover" event listener to display tooltip
+  // circlesGroup.selectAll("circle")
+  //   .on("mouseover", function(d) {
 
-  // "mouseover" event listener to display tooltip
-  circlesGroup.selectAll("circle")
-    .on("mouseover", function(d) {
+  //   console.log('x',chosenXAxis);
+  //   console.log('y',chosenYAxis );
 
-    console.log('x',chosenXAxis);
-    console.log('y',chosenYAxis );
-
-
-    toolTip.style("display", "block");
-    toolTip.html(`<strong>${d.state} </strong><br> ${chosenXAxis}:${d[chosenXAxis]}<br>${chosenYAxis} : ${d[chosenYAxis]}`)
-      .style("left", d3.event.pageX + "px")
-        .style("top", d3.event.pageY + "px");
-          });
-    // "mouseout" event listener to hide tooltip
-    circlesGroup.selectAll("circle")
-    .on("mouseout", function() {
-      toolTip.style("display", "none");
-    });
-
+  //   toolTip.style("display", "block");
+  //   toolTip.html(`<strong>${d.state} </strong><br> ${chosenXAxis}:${d[chosenXAxis]}<br>${chosenYAxis} : ${d[chosenYAxis]}`)
+  //     .style("left", d3.event.pageX + "px")
+  //       .style("top", d3.event.pageY + "px");
+  //         })
+  //   // "mouseout" event listener to hide tooltip
+  //   // circlesGroup.selectAll("circle")
+  //   .on("mouseout", function() {
+  //     toolTip.style("display", "none");
+  //   });
+      // Step 3: Create "mouseover" event listener to display tooltip
+      circlesGroup.selectAll("circle")
+        .on("mouseover", function(d) {
+          toolTip.show(d, this);
+          })
+      // Step 4: Create "mouseout" event listener to hide tooltip
+        .on("mouseout", function(d) {
+          toolTip.hide(d);
+        });
   
   };  //function makeResponsive
 

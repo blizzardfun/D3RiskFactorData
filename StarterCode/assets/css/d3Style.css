@@ -52,16 +52,15 @@
 }
 .tooltip {
   position: absolute;
-  width: 80px;
-  height: 50px;
-  padding: 10px;
+  width: 100px;
+  height: 60px;
+  padding: 5px;
   font: 12px sans-serif;
   text-align: center;
-  color: black;
-  background: blue;
+  color: white;
+  background: gray;
   border: 0;
   border-radius: 10px;
-  display: none;
 }
 .d3-tip {
   padding: 6px;
