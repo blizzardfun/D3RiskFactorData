@@ -213,7 +213,11 @@ var incomeLabel = ylabelsGroup.append("text")
      .attr("class", "tooltip")
      .offset([80, -60])   //offset from page event
      .html(function(d) {
+       if (chosenYAxis === 'income') {
+        return (`<strong>${d.state} </strong><br> ${chosenXAxis}:${d[chosenXAxis]}% <br>${chosenYAxis} : $${d[chosenYAxis]}`);
+       } else {
        return (`<strong>${d.state} </strong><br> ${chosenXAxis}:${d[chosenXAxis]}% <br>${chosenYAxis} : ${d[chosenYAxis]}%`);
+       }
      });
   
   //
@@ -319,28 +323,12 @@ ylabelsGroup.selectAll("text")
 });
 
   // // "mouseover" event listener to display tooltip
-  // circlesGroup.selectAll("circle")
-  //   .on("mouseover", function(d) {
 
-  //   console.log('x',chosenXAxis);
-  //   console.log('y',chosenYAxis );
-
-  //   toolTip.style("display", "block");
-  //   toolTip.html(`<strong>${d.state} </strong><br> ${chosenXAxis}:${d[chosenXAxis]}<br>${chosenYAxis} : ${d[chosenYAxis]}`)
-  //     .style("left", d3.event.pageX + "px")
-  //       .style("top", d3.event.pageY + "px");
-  //         })
-  //   // "mouseout" event listener to hide tooltip
-  //   // circlesGroup.selectAll("circle")
-  //   .on("mouseout", function() {
-  //     toolTip.style("display", "none");
-  //   });
-      // Step 3: Create "mouseover" event listener to display tooltip
       circlesGroup.selectAll("circle")
         .on("mouseover", function(d) {
           toolTip.show(d, this);
           })
-      // Step 4: Create "mouseout" event listener to hide tooltip
+      //  "mouseout" event listener to hide tooltip
         .on("mouseout", function(d) {
           toolTip.hide(d);
         });
