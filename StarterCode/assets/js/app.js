@@ -103,8 +103,8 @@ function renderCircles (circlesGroup, xScale, yScale, chosenXAxis, chosenYAxis )
       // circlesGroup.selectAll("text")
         newText.transition()
         .duration(1000)
-        .attr("x", d=> xScale(d[chosenXAxis])-5)
-        .attr("y", d =>yScale(d[chosenYAxis])+5);    
+        .attr("x", d=> xScale(d[chosenXAxis]))
+        .attr("y", d =>yScale(d[chosenYAxis]-0.15));    
     return circlesGroup;
 }
   
@@ -151,24 +151,19 @@ function renderCircles (circlesGroup, xScale, yScale, chosenXAxis, chosenYAxis )
   var circlesGroup = chartGroup.selectAll("circle")
         .data(surveyData)
         .enter()
-    // var elemEnter = circlesGroup.enter()
-    //     .append("g")
-        // .attr("transform",
-        //     d=> `translate( ${xLinearScale(d[chosenXAxis])}, 
-        //                ${yLinearScale(d[chosenYAxis])})`)
 
         /* circle for each block */
         var newCircle=circlesGroup.append("circle")
             .attr("cx", d=> xLinearScale(d[chosenXAxis]))
             .attr("cy", d =>yLinearScale(d[chosenYAxis]))
-            .attr("r", 20)
+            .attr("r", 15)
             .classed("stateCircleObesity" ,true)
             .attr("opacity", ".5");
 
         /* Create the text for each block */
        var newText=circlesGroup.append("text")
-            .attr("x", d=> xLinearScale(d[chosenXAxis])-5)
-            .attr("y",d =>yLinearScale(d[chosenYAxis])+5)
+            .attr("x", d=> xLinearScale(d[chosenXAxis]))
+            .attr("y",d =>yLinearScale(d[chosenYAxis]-0.15))
             .classed("stateTextObesity" ,true)
             .text(d => d.abbr);
 
@@ -188,9 +183,9 @@ function renderCircles (circlesGroup, xScale, yScale, chosenXAxis, chosenYAxis )
     .attr("y", 40)
     .attr("value", "smokes") // value to grab for event listener
     .classed("inactive", true)
-    .text("Smokes (%)");
+    .text("Smokers (%)");
 
-// Create group for  2 y- axis labels **************
+// append group for  2 y- axis labels **************
 var ylabelsGroup = chartGroup.append("g")
 .attr("transform", `translate(0, ${height/2}) rotate (-90)`);
 
@@ -245,10 +240,8 @@ xlabelsGroup.selectAll("text")
     // updates circles with new x values
     circlesGroup = renderCircles(circlesGroup, xLinearScale, yLinearScale, chosenXAxis, chosenYAxis);
 
-    // updates tooltips with new info
-    // circlesGroup = updateToolTip(chosenXAxis, circlesGroup);
-
-    // changes classes to change bold text
+   
+    // changes classes to change bold labels and colors
     if (chosenXAxis === "obesity") {
       newCircle
         .classed("stateCircleObesity", true)
@@ -299,9 +292,6 @@ ylabelsGroup.selectAll("text")
     // updates circles with new x values
     circlesGroup = renderCircles(circlesGroup, xLinearScale, yLinearScale, chosenXAxis, chosenYAxis);
 
-    // updates tooltips with new info
-    // circlesGroup = updateToolTip(chosenXAxis, circlesGroup);
-
     // changes classes to change bold text
     if (chosenYAxis === "poverty") {
       povertyLabel
@@ -333,9 +323,9 @@ ylabelsGroup.selectAll("text")
           toolTip.hide(d);
         });
   
-  };  //function makeResponsive
+  };  //end function makeResponsive
 
 makeResponsive();
 d3.select(window).on("resize", makeResponsive);
 
-}); // data read
+}); // end from data read

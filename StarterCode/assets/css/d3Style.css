@@ -26,12 +26,12 @@
 /* font size dependent on radius, see app.js */
 .stateTextSmoke {
   font-family: sans-serif;
-  fill: #fff;
+  fill:whitesmoke;
   text-anchor: middle;
 }
-.stateText {
+.stateTextObesity {
   font-family: sans-serif;
-  fill: #fff;
+  fill: black;
   text-anchor: middle;
 }
 
